@@ -3116,3 +3116,138 @@ proc getTextSize*(font: TTF_Font, text: string): tuple[w, h: int] =
 # =============================================================================
 # End of SDL3_ttf Wrapper
 # =============================================================================
+
+
+
+
+
+
+
+
+
+
+
+# =============================================================================
+# SDL3_image - Загрузка изображений различных форматов
+# =============================================================================
+
+when defined(windows):
+  const IMG_LibName* = "SDL3_image.dll"
+elif defined(macosx):
+  const IMG_LibName* = "libSDL3_image.dylib"
+else:
+  const IMG_LibName* = "libSDL3_image.so(|.0)"
+
+# Типы SDL_image
+type
+  IMG_InitFlags* = enum
+    IMG_INIT_JPG = 0x00000001
+    IMG_INIT_PNG = 0x00000002
+    IMG_INIT_TIF = 0x00000004
+    IMG_INIT_WEBP = 0x00000008
+    IMG_INIT_JXL = 0x00000010
+    IMG_INIT_AVIF = 0x00000020
+
+  SdlSurfaceAnimation* = object
+    w*: cint
+    h*: cint
+    count*: cint
+    frames*: ptr SdlSurface
+    delays*: ptr cint
+
+
+{.push importc, dynlib: IMG_LibName, cdecl.}
+
+# Инициализация и версия
+proc IMG_Init*(flags: cint): cint
+proc IMG_Quit*()
+proc IMG_Version*(): cint
+
+# Основные функции загрузки
+proc IMG_Load*(file: cstring): SdlSurface
+proc IMG_Load_IO*(src: ptr SdlIOStream, closeio: SdlBool): SdlSurface
+proc IMG_LoadTyped_IO*(src: ptr SdlIOStream, closeio: SdlBool, `type`: cstring): SdlSurface
+
+# Загрузка текстур
+proc IMG_LoadTexture*(renderer: SdlRenderer, file: cstring): SdlTexture
+proc IMG_LoadTexture_IO*(renderer: SdlRenderer, src: ptr SdlIOStream, closeio: SdlBool): SdlTexture
+proc IMG_LoadTextureTyped_IO*(renderer: SdlRenderer, src: ptr SdlIOStream, closeio: SdlBool, `type`: cstring): SdlTexture
+
+# Загрузка анимаций
+proc IMG_LoadAnimation*(file: cstring): ptr SdlSurfaceAnimation
+proc IMG_LoadAnimation_IO*(src: ptr SdlIOStream, closeio: SdlBool): ptr SdlSurfaceAnimation
+proc IMG_LoadAnimationTyped_IO*(src: ptr SdlIOStream, closeio: SdlBool, `type`: cstring): ptr SdlSurfaceAnimation
+proc IMG_FreeAnimation*(anim: ptr SdlSurfaceAnimation)
+
+# Загрузка GIF анимаций
+proc IMG_LoadGIFAnimation_IO*(src: ptr SdlIOStream): ptr SdlSurfaceAnimation
+
+# Загрузка специфических форматов
+proc IMG_LoadAVIF_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadICO_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadCUR_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadBMP_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadGIF_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadJPG_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadJXL_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadLBM_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadPCX_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadPNG_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadPNM_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadQOI_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadSVG_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadSizedSVG_IO*(src: ptr SdlIOStream, width: cint, height: cint): SdlSurface
+proc IMG_LoadTGA_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadTIF_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadXCF_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadXPM_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadXV_IO*(src: ptr SdlIOStream): SdlSurface
+proc IMG_LoadWEBP_IO*(src: ptr SdlIOStream): SdlSurface
+
+# Чтение из массива памяти
+proc IMG_ReadXPMFromArray*(xpm: ptr cstring): SdlSurface
+proc IMG_ReadXPMFromArrayToRGB888*(xpm: ptr cstring): SdlSurface
+
+# Сохранение изображений
+proc IMG_SavePNG*(surface: SdlSurface, file: cstring): SdlBool
+proc IMG_SavePNG_IO*(surface: SdlSurface, dst: ptr SdlIOStream, closeio: SdlBool): SdlBool
+proc IMG_SaveJPG*(surface: SdlSurface, file: cstring, quality: cint): SdlBool
+proc IMG_SaveJPG_IO*(surface: SdlSurface, dst: ptr SdlIOStream, closeio: SdlBool, quality: cint): SdlBool
+
+# Декодеры анимации
+proc IMG_ResetAnimationDecoder*(animation: ptr SdlSurfaceAnimation)
+
+# Вспомогательные функции определения типа
+proc IMG_isAVIF*(src: ptr SdlIOStream): SdlBool
+proc IMG_isICO*(src: ptr SdlIOStream): SdlBool
+proc IMG_isCUR*(src: ptr SdlIOStream): SdlBool
+proc IMG_isBMP*(src: ptr SdlIOStream): SdlBool
+proc IMG_isGIF*(src: ptr SdlIOStream): SdlBool
+proc IMG_isJPG*(src: ptr SdlIOStream): SdlBool
+proc IMG_isJXL*(src: ptr SdlIOStream): SdlBool
+proc IMG_isLBM*(src: ptr SdlIOStream): SdlBool
+proc IMG_isPCX*(src: ptr SdlIOStream): SdlBool
+proc IMG_isPNG*(src: ptr SdlIOStream): SdlBool
+proc IMG_isPNM*(src: ptr SdlIOStream): SdlBool
+proc IMG_isSVG*(src: ptr SdlIOStream): SdlBool
+proc IMG_isQOI*(src: ptr SdlIOStream): SdlBool
+proc IMG_isTIF*(src: ptr SdlIOStream): SdlBool
+proc IMG_isXCF*(src: ptr SdlIOStream): SdlBool
+proc IMG_isXPM*(src: ptr SdlIOStream): SdlBool
+proc IMG_isXV*(src: ptr SdlIOStream): SdlBool
+proc IMG_isWEBP*(src: ptr SdlIOStream): SdlBool
+
+{.pop.}
+
+
+
+
+
+
+
+
+
+
+
+
+
